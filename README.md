@@ -233,62 +233,6 @@ CH=12
 
 **Interface:** wlan0
 
-## Build Process
-
-### Building from Source
-
-```bash
-# Extract base firmware
-cd "/home/gokul/Documents/Hg323 rgw 3.7"
-tar -xf firmware_v23_full_protection.tar
-
-# Extract rootfs
-unsquashfs -d rootfs_v23 rootfs_FS
-
-# Make modifications
-cd rootfs_v23
-
-# Remove unwanted binaries
-rm -f bin/diag bin/cupsd bin/lpadmin bin/lpstat bin/lp bin/startcupsd
-rm -f bin/ftp bin/ftpd bin/tftp bin/tftpd
-rm -f bin/miniupnpd bin/upnpctrl
-rm -f bin/radvdump bin/11N_UDPserver bin/udpechoserver
-
-# Remove unwanted libraries
-rm -f lib/libcups.so* lib/libmini_upnp.so
-
-# Remove EPON modules
-rm -f lib/modules/epon_drv.ko lib/modules/epon_mpcp.ko lib/modules/epon_polling.ko
-rm -f lib/modules/scsi_wait_scan.ko
-
-# Remove backup files
-rm -f lib/features/*.orig
-
-# Fix WiFi channel
-sed -i 's/CH=$(get_free_channel)/CH=12/' etc/rc.d/rc35
-
-# Rebuild squashfs
-cd ..
-mksquashfs rootfs_v23 rootfs_FS_new -noappend -b 65536 -comp lzma -processors 1
-
-# Package firmware
-cp firmware_v23_full_protection.tar firmware_slim_v12.tar
-tar --delete -f firmware_slim_v12.tar rootfs_FS
-tar -rf firmware_slim_v12.tar rootfs_FS_new
-mv rootfs_FS_new rootfs_FS
-tar -rf firmware_slim_v12.tar rootfs_FS
-
-# Verify checksum
-md5sum firmware_slim_v12.tar
-```
-
-### Build Requirements
-
-- Linux system (tested on Debian/Ubuntu)
-- squashfs-tools package installed
-- Standard GNU tar
-- At least 100MB free disk space
-
 ## Network Configuration
 
 ### Default Settings
